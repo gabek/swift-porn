@@ -1,0 +1,27 @@
+syntax = "proto2";
+
+import "nestedobject.proto";
+
+message TestMessage {
+  optional string id = 1;
+
+  optional string name = 4;
+  optional uint32 random_int_field = 8;
+  optional string your_mom = 9;
+  optional string all_up_in_ur_proto = 10;
+
+  optional NestedObject test_object = 13;
+  optional State object_state = 14;
+
+  repeated string repeated_field = 15;
+
+  enum State {
+    UNKNOWN = 0;
+    IS_AWESOME = 1;
+    IS_NOT_AWESOME = 2;
+    IS_PURPLE = 3;
+    IS_ROTTEN = 4;
+    IS_LEET = 5;
+  }
+
+}
