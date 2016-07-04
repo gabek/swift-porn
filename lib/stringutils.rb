@@ -26,4 +26,8 @@ class String
   def uncapitalize
     self[0, 1].downcase + self[1..-1]
   end
+
+  def swiftname_from_protoname
+    return self.split("/").last.split(".").first.capitalize + ".swift"
+  end
 end
