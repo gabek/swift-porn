@@ -1,4 +1,4 @@
-require './stringutils.rb'
+require './lib/stringutils.rb'
 
 Enum = Struct.new(:name, :cases)
 EnumCase = Struct.new(:name, :value)
