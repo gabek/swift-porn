@@ -7,6 +7,7 @@ I started wanting to utilize the Protobuf + ObjectMapper + Realm + NSURLSession 
 ## TODOs
 * Use the correct transforms when deserializing via ObjectMapper to a Realm Type.  Disable/enable as needed via feature requirements.
 * Generate networking code.
+* Support passing multiple proto files to the cli.
 
 ## Major Goals:
 
