@@ -4,11 +4,18 @@ This is a work in progress with the goal to offer Swift developers a lightweight
 
 I started wanting to utilize the Protobuf + ObjectMapper + Realm + NSURLSession stack and generating the code around that to support it.  However each of these can be disabled independently.
 
-Major Goals:
+## TODOs
+* Use the correct transforms when deserializing via ObjectMapper to a Realm Type.  Disable/enable as needed via feature requirements.
+* Generate networking code.
+
+## Major Goals:
 
 1. Generate Swift models that utilize the frameworks and libraries developers are already relying on such as Realm for database persistence, ObjectMapper for serialization and NSURLSession for networking.
 2. Generate the service layer in form of a protocol that can be implemented and utilize the Request/Response models and filling in your own networking stack.
 3. Turn any of the dependency features off for people who are not using them.
+
+
+
 
 
 Take a proto definition such as
