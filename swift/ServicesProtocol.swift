@@ -1,3 +1,3 @@
 protocol Greeter {
-  func sayHello(request: HelloRequest, ((response: HelloReply -> Void)?) = nil)}
+  func sayHello(request: HelloRequest, ((response: HelloReply -> Void)?) = nil)
 }

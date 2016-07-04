@@ -53,7 +53,6 @@ class ServiceParser
         renderString += String.indent(1)
         renderString += generateSignature(method)
       end
-      renderString += "}"
 
       # Generate the default implementations
       # renderString += "extension #{service.name} {" + String.newline
@@ -61,7 +60,7 @@ class ServiceParser
       #   signature = generateDefaultImplementation(method)
       #   renderString += signature
       # end
-      
+
     end
     renderString += String.newline + "}"
     return renderString
