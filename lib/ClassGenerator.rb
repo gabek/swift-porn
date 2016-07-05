@@ -30,14 +30,21 @@ class ClassGenerator
 
       # properties
       swiftClass.properties.each do |property|
-        propertyType = property.label == "repeated" ? "[#{property.type}]" : property.type
         renderString += String.indent(indentLevel)
 
         if withRealm
-          renderString += "dynamic "
+          if property.label == "repeated"
+            propertyType = property.type
+            renderString += "// Use List type so #{property.name} can be persisted in Realm" + String.newline + String.indent
+            renderString += "var #{property.name} = List<" +  propertyType + ">()" + String.newline
+          else
+            propertyType = property.label == "repeated" ? "[#{property.type}]" : property.type
+            renderString += "dynamic var #{property.name}: " +  propertyType + "?" + String.newline
+          end
+        else
+          propertyType = property.label == "repeated" ? "[#{property.type}]" : property.type
+          renderString += "var #{property.name}: " +  propertyType + "?" + String.newline
         end
-
-        renderString += "var #{property.name}: " +  propertyType + "?" + String.newline
       end
 
       # Nested enums
@@ -46,10 +53,20 @@ class ClassGenerator
         renderString += EnumGenerator.render(enum)
       end
 
+      # Mapping function for serialization with ObjectMapper
       if withObjectmapper
         renderString += String.newline + String.indent(indentLevel) + "func mapping(map: Map) {"
+
         swiftClass.properties.each do |property|
-          renderString += String.newline + String.indent(indentLevel + 1) + "#{property.name} <- map[\"#{property.key}\"]"
+          renderString += String.newline + String.indent(indentLevel + 1)
+
+          # If this is an array AND we're using Realm we need to convert it to a Realm List<T>
+          if property.label == "repeated" && withRealm
+            renderString += "// Arrays need to be converted to a Realm list" + String.newline
+            renderString += String.indent(indentLevel + 1) + "#{property.name} <- (map[\"#{property.key}\"], ArrayTransform())"
+          else
+            renderString += "#{property.name} <- map[\"#{property.key}\"]"
+          end
         end
         renderString += String.newline + String.indent(indentLevel) + "}"
         renderString += String.newline(2)

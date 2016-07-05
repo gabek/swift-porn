@@ -35,7 +35,7 @@ class ServiceParser
     methods = []
 
     # Services
-    renderString = ""
+    renderString = String.newline(2)
 
     file_descriptor.service.each do |service|
       service.method.each do |method|
