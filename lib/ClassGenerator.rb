@@ -77,14 +77,19 @@ class ClassGenerator
   end
 
   def self.propertyLineForType(property, withRealm)
+    # Certain swift types are not representable in Objective-C so they
+    # must use the RealmOptional<T> type to represent them.
+    typesUsingRealmOptional = ["Int", "Float", "Double", "Bool"]
+
     propertyType = property.type
     propertyLine = ""
 
     if withRealm
       if property.label == "repeated"
         propertyLine += "// Use List type so #{property.name} can be persisted in Realm" + String.newline + String.indent
-        propertyLine += "var #{property.name} = List<" +  propertyType + ">()" + String.newline
-      elsif property.type == "Int" || property.type == "Float" || property.type == "Double"
+        propertyLine += "var #{property.name} = List<" +  propertyType + ">()"
+      elsif typesUsingRealmOptional.include?(property.type)
+        propertyLine += "// #{property.type} objects must be wrapped in a RealmOptional" + String.newline + String.indent
         propertyLine += "var #{property.name} = RealmOptional<#{property.type}>()"
       else
         propertyLine += "dynamic var #{property.name}: #{property.type}?"
