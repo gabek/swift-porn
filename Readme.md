@@ -8,6 +8,7 @@ I started wanting to utilize the Protobuf + ObjectMapper + Realm + NSURLSession 
 * Use the correct transforms when deserializing via ObjectMapper to a Realm Type.  Disable/enable as needed via feature requirements.  `ArrayTransform` is in.
 * Generate networking code.
 * Support passing multiple proto files to the cli.
+* Test by POSTing sample payload to httpbin and parsing the response.
 
 ## Major Goals:
 

@@ -18,14 +18,23 @@ class ServiceParser
 
   def generateSignature(method)
     methodName = method.name.split(".").last.uncapitalize
-    signature = "func #{methodName}(request: #{method.inputType}, ((response: #{method.outputType} -> Void)?) = nil)"
+    signature = "func #{methodName}(request: #{method.inputType}, completionHandler: ((#{method.outputType}? -> Void)?))"
     return signature
   end
 
   def generateDefaultImplementation(method)
     methodName = method.name.split(".").last.uncapitalize
-    implementation = String.indent + "func #{methodName}(request: #{method.inputType}, ((response: #{method.outputType} -> Void)?) = nil) {" + String.newline
-    implementation += "assertionFailure()"
+    implementation = String.indent + "func #{methodName}(request: #{method.inputType}, completionHandler: ((#{method.outputType}? -> Void)?) = nil) {" + String.newline
+    implementation += String.indent(2) + "let defaultSession = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())" + String.newline
+    implementation += String.indent(2) + "let url = NSURL(string: \"http://something.net/#{method.name}\")!" + String.newline
+    implementation += String.indent(2) + "let dataTask = defaultSession.dataTaskWithURL(url) {" + String.newline
+    implementation += String.indent(3) + "data, response, error in" + String.newline
+    implementation += String.indent(4) + "// Handle response" + String.newline
+    implementation += String.indent(4) + "let #{method.outputType.uncapitalize} = Mapper<#{method.outputType}>().map(data)" + String.newline
+    implementation += String.indent(4) + "completionHandler?(#{method.outputType.uncapitalize})" + String.newline
+    implementation += String.indent(3) + "}" + String.newline
+    implementation += String.indent(2) + "dataTask.resume()" + String.newline
+
     implementation += String.indent + "}" + String.newline(2)
     return implementation
   end
@@ -35,7 +44,8 @@ class ServiceParser
     methods = []
 
     # Services
-    renderString = String.newline(2)
+    renderString = String.newline(2) + "import Foundation" + String.newline
+    renderString += "import ObjectMapper" + String.newline(2)
 
     file_descriptor.service.each do |service|
       service.method.each do |method|
@@ -52,17 +62,19 @@ class ServiceParser
       methods.each do |method|
         renderString += String.indent(1)
         renderString += generateSignature(method)
+        renderString += String.newline + "}"
       end
 
       # Generate the default implementations
-      # renderString += "extension #{service.name} {" + String.newline
-      # methods.each do |method|
-      #   signature = generateDefaultImplementation(method)
-      #   renderString += signature
-      # end
+      renderString += String.newline(2)
+      renderString += "extension #{service.name} {" + String.newline
+      methods.each do |method|
+        signature = generateDefaultImplementation(method)
+        renderString += signature
+        renderString += "}"
+      end
 
     end
-    renderString += String.newline + "}"
     return renderString
   end
 end

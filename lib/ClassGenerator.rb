@@ -23,28 +23,19 @@ class ClassGenerator
     renderString = ""
       renderString += "class #{swiftClass.name}: "
       if withRealm
-        renderString += "object "
+        renderString += "Object"
       end
 
-      renderString += "{" + String.newline
+      if withObjectmapper
+        renderString += ", Mappable"
+      end
+
+      renderString += " {" + String.newline
 
       # properties
       swiftClass.properties.each do |property|
         renderString += String.indent(indentLevel)
-
-        if withRealm
-          if property.label == "repeated"
-            propertyType = property.type
-            renderString += "// Use List type so #{property.name} can be persisted in Realm" + String.newline + String.indent
-            renderString += "var #{property.name} = List<" +  propertyType + ">()" + String.newline
-          else
-            propertyType = property.label == "repeated" ? "[#{property.type}]" : property.type
-            renderString += "dynamic var #{property.name}: " +  propertyType + "?" + String.newline
-          end
-        else
-          propertyType = property.label == "repeated" ? "[#{property.type}]" : property.type
-          renderString += "var #{property.name}: " +  propertyType + "?" + String.newline
-        end
+        renderString += ClassGenerator.propertyLineForType(property, withRealm) + String.newline
       end
 
       # Nested enums
@@ -63,7 +54,7 @@ class ClassGenerator
           # If this is an array AND we're using Realm we need to convert it to a Realm List<T>
           if property.label == "repeated" && withRealm
             renderString += "// Arrays need to be converted to a Realm list" + String.newline
-            renderString += String.indent(indentLevel + 1) + "#{property.name} <- (map[\"#{property.key}\"], ArrayTransform())"
+            renderString += String.indent(indentLevel + 1) + "#{property.name} <- (map[\"#{property.key}\"], ArrayTransform<#{property.type}>())"
           else
             renderString += "#{property.name} <- map[\"#{property.key}\"]"
           end
@@ -83,6 +74,27 @@ class ClassGenerator
 
       renderString += String.newline(2)
     return renderString
+  end
+
+  def self.propertyLineForType(property, withRealm)
+    propertyType = property.type
+    propertyLine = ""
+
+    if withRealm
+      if property.label == "repeated"
+        propertyLine += "// Use List type so #{property.name} can be persisted in Realm" + String.newline + String.indent
+        propertyLine += "var #{property.name} = List<" +  propertyType + ">()" + String.newline
+      elsif property.type == "Int" || property.type == "Float" || property.type == "Double"
+        propertyLine += "var #{property.name} = RealmOptional<#{property.type}>()"
+      else
+        propertyLine += "dynamic var #{property.name}: #{property.type}?"
+      end
+    else
+      propertyType = property.label == "repeated" ? "[#{property.type}]" : property.type
+      propertyLine += "var #{property.name}: " +  propertyType + "?" + String.newline
+    end
+
+    return propertyLine
   end
 
 end
