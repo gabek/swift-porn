@@ -38,3 +38,9 @@ class ArrayTransform<T:RealmSwift.Object where T:Mappable> : TransformType {
         return nil
     }
 }
+
+extension NSData {
+    func utf8String() -> String? {
+        return String(data: self, encoding: NSUTF8StringEncoding)
+    }
+}

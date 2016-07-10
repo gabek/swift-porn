@@ -20,6 +20,8 @@ class ClassGenerator
 
 
   def self.render(swiftClass, indentLevel = 1, withRealm = true, withObjectmapper = true)
+    typesUsingRealmOptional = ["Int", "Float", "Double", "Bool"]
+
     renderString = ""
       renderString += "class #{swiftClass.name}: "
       if withRealm
@@ -55,8 +57,10 @@ class ClassGenerator
           if property.label == "repeated" && withRealm
             renderString += "// Arrays need to be converted to a Realm list" + String.newline
             renderString += String.indent(indentLevel + 1) + "#{property.name} <- (map[\"#{property.key}\"], ArrayTransform<#{property.type}>())"
+          elsif typesUsingRealmOptional.include?(property.type)
+            renderString += String.indent(indentLevel) + "#{property.name}.value <- map[\"#{property.key}\"]"
           else
-            renderString += "#{property.name} <- map[\"#{property.key}\"]"
+            renderString += String.indent(indentLevel) + "#{property.name} <- map[\"#{property.key}\"]"
           end
         end
         renderString += String.newline + String.indent(indentLevel) + "}"
@@ -70,7 +74,6 @@ class ClassGenerator
       end
 
       renderString += "}"
-
 
       renderString += String.newline(2)
     return renderString

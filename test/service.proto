@@ -1,16 +1,16 @@
 syntax = "proto2";
 // The greeter service definition.
-service Greeter {
-  // Sends a greeting
-  rpc SayHello (HelloRequest) returns (HelloReply) {}
+service DateTimeTest {
+  rpc test (DateTimeRequest) returns (DateTimeResponse) {}
 }
 
 // The request message containing the user's name.
-message HelloRequest {
-  optional string name = 1;
+message DateTimeRequest {
 }
 
 // The response message containing the greetings
-message HelloReply {
-  optional string message = 1;
+message DateTimeResponse {
+  optional string time = 1;
+  optional int64 milliseconds_since_epoch = 2;
+  optional string date = 3;
 }
