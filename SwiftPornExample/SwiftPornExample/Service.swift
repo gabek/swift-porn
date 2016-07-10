@@ -5,7 +5,7 @@ import Foundation
 import RealmSwift
 import ObjectMapper
 
-class DateTimeRequest: Object, Mappable {
+class PostTestRequest: Object, Mappable {
 
   func mapping(map: Map) {
   }
@@ -17,16 +17,29 @@ class DateTimeRequest: Object, Mappable {
 
 }
 
-class DateTimeResponse: Object, Mappable {
-  dynamic var time: String?
-  // Int objects must be wrapped in a RealmOptional
-  var millisecondsSinceEpoch = RealmOptional<Int>()
-  dynamic var date: String?
+class PostTestResponse: Object, Mappable {
+  dynamic var origin: String?
+  dynamic var url: String?
+  dynamic var headers: PostTestResponseHeaders?
 
   func mapping(map: Map) {
-      time <- map["time"]
-      millisecondsSinceEpoch.value <- map["milliseconds_since_epoch"]
-      date <- map["date"]
+      origin <- map["origin"]
+      url <- map["url"]
+      headers <- map["headers"]
+  }
+
+
+  required convenience init?(_ map: Map) {
+    self.init()
+  }
+
+}
+
+class PostTestResponseHeaders: Object, Mappable {
+  dynamic var Host: String?
+
+  func mapping(map: Map) {
+      Host <- map["Host"]
   }
 
 

@@ -13,9 +13,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let request = DateTimeRequest()
+        let request = PostTestRequest()        
         let service = Services()
-        service.test(request) { (response) in
+        service.post(request) { (response) in
             print(response)
         }
     }

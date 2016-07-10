@@ -5,18 +5,22 @@ import Foundation
 import ObjectMapper
 
 protocol DateTimeTest {
-  func test(request: DateTimeRequest, completionHandler: ((DateTimeResponse? -> Void)?))
+  func post(request: PostTestRequest, completionHandler: ((PostTestResponse? -> Void)?))
 }
 
 extension DateTimeTest {
-  func test(request: DateTimeRequest, completionHandler: ((DateTimeResponse? -> Void)?) = nil) {
+  func post(request: PostTestRequest, completionHandler: ((PostTestResponse? -> Void)?) = nil) {
     let defaultSession = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
-    let url = NSURL(string: "http://date.jsontest.com/test")!
-    let dataTask = defaultSession.dataTaskWithURL(url) {
+    let url = NSURL(string: "https://httpbin.org/post")!
+    let httpRequest = NSMutableURLRequest(URL: url)
+    httpRequest.HTTPMethod = "POST"
+    let jsonString = Mapper().toJSONString(request, prettyPrint: true)
+    httpRequest.HTTPBody = jsonString?.dataUsingEncoding(NSUTF8StringEncoding)
+    let dataTask = defaultSession.dataTaskWithRequest(httpRequest) {
       data, response, error in
         // Handle response
-        let dateTimeResponse = Mapper<DateTimeResponse>().map(data?.utf8String())
-        completionHandler?(dateTimeResponse)
+        let postTestResponse = Mapper<PostTestResponse>().map(data?.utf8String())
+        completionHandler?(postTestResponse)
       }
     dataTask.resume()
   }

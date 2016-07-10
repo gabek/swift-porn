@@ -28,7 +28,11 @@ class ServiceParser
     implementation = String.indent + "func #{methodName}(request: #{method.inputType}, completionHandler: ((#{method.outputType}? -> Void)?) = nil) {" + String.newline
     implementation += String.indent(2) + "let defaultSession = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())" + String.newline
     implementation += String.indent(2) + "let url = NSURL(string: \"#{Configuration.host}/#{methodName}\")!" + String.newline
-    implementation += String.indent(2) + "let dataTask = defaultSession.dataTaskWithURL(url) {" + String.newline
+    implementation += String.indent(2) + "let httpRequest = NSMutableURLRequest(URL: url)" + String.newline
+    implementation += String.indent(2) + "httpRequest.HTTPMethod = \"POST\"" + String.newline
+    implementation += String.indent(2) + "let jsonString = Mapper().toJSONString(request, prettyPrint: true)" + String.newline
+    implementation += String.indent(2) + "httpRequest.HTTPBody = jsonString?.dataUsingEncoding(NSUTF8StringEncoding)" + String.newline
+    implementation += String.indent(2) + "let dataTask = defaultSession.dataTaskWithRequest(httpRequest) {" + String.newline
     implementation += String.indent(3) + "data, response, error in" + String.newline
     implementation += String.indent(4) + "// Handle response" + String.newline
     implementation += String.indent(4) + "let #{method.outputType.uncapitalize} = Mapper<#{method.outputType}>().map(data?.utf8String())" + String.newline

@@ -1,2 +1,2 @@
 config:
-  host: http://date.jsontest.com
+  host: https://httpbin.org

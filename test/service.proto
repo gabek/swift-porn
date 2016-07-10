@@ -1,16 +1,20 @@
 syntax = "proto2";
 // The greeter service definition.
 service DateTimeTest {
-  rpc test (DateTimeRequest) returns (DateTimeResponse) {}
+  rpc post (PostTestRequest) returns (PostTestResponse) {}
 }
 
 // The request message containing the user's name.
-message DateTimeRequest {
+message PostTestRequest {
 }
 
 // The response message containing the greetings
-message DateTimeResponse {
-  optional string time = 1;
-  optional int64 milliseconds_since_epoch = 2;
-  optional string date = 3;
+message PostTestResponse {
+  optional string origin = 1;
+  optional string url = 2;
+  optional PostTestResponseHeaders headers = 3;
+}
+
+message PostTestResponseHeaders {
+  optional string Host = 1;
 }
